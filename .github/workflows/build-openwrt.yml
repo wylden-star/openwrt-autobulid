@@ -11,6 +11,7 @@
 name: Build_x86_64
 
 on: 
+  repository_dispatch:
   release:
     types: [published]
 
