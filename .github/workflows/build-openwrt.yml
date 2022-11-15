@@ -11,16 +11,8 @@
 name: Build_x86_64
 
 on: 
-  repository_dispatch:
-  workflow_dispatch:
-   inputs:
-     ssh:
-       description: 'SSH connection to Actions'
-       required: false
-       default: 'false'
-    
-  #release:
-  #  types: [published]
+  release:
+    types: [published]
 
   #push:
   #  branches: 
@@ -70,15 +62,12 @@ jobs:
         sudo -E apt-get clean
     - name: Clone source code
       env: 
-      # REPO_URL: https://github.com/coolsnowwolf/lede
-        REPO_URL: https://github.com/Lienol/openwrt
-        REPO_BRANCH: 21.02
+        REPO_URL: https://github.com/coolsnowwolf/lede
+        REPO_BRANCH: master
       run: |
         git clone --depth 1 $REPO_URL -b $REPO_BRANCH openwrt
         cd openwrt
         echo "src-git ssrp https://github.com/fw876/helloworld.git" >> ./feeds.conf.default
-        echo "src-git pass https://github.com/xiaorouji/openwrt-passwall.git" >> ./feeds.conf.default
-        echo "src-git Lienol https://github.com/Lienol/openwrt.git" >> ./feeds.conf.default
         
     - name: Update & Install feeds
       working-directory: ./openwrt
@@ -86,11 +75,10 @@ jobs:
         ./scripts/feeds update -a
         ./scripts/feeds install -a
         ./scripts/feeds install -a
-        
-    #- name: Import external feeds - passwall
-    #  working-directory: ./openwrt
-    #  run: |
-    #    git clone https://github.com/xiaorouji/openwrt-passwall.git package/lienol
+    - name: Import external feeds - passwall
+      working-directory: ./openwrt
+      run: |
+        git clone https://github.com/xiaorouji/openwrt-passwall.git package/lienol
     #    git clone "your_github_link" package/"your_folder_name"      
 
     #- name: Import external feeds - JerryKuKu Argon
