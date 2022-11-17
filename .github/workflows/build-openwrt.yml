@@ -8,7 +8,7 @@
 # 修改2：将customize.sh重命名为login-setting.sh
 #=================================================
 
-name: Build_x86_64
+name: 编译x86_64位固件
 
 on: 
   repository_dispatch:
@@ -68,12 +68,10 @@ jobs:
         sudo -E apt-get -y install build-essential asciidoc binutils bzip2 gawk gettext git libncurses5-dev libz-dev patch python3 python2.7 unzip zlib1g-dev lib32gcc1 libc6-dev-i386 subversion flex uglifyjs git-core gcc-multilib p7zip p7zip-full msmtp libssl-dev texinfo libglib2.0-dev xmlto qemu-utils upx libelf-dev autoconf automake libtool autopoint device-tree-compiler g++-multilib antlr3 gperf wget curl swig rsync
         sudo -E apt-get -y autoremove --purge
         sudo -E apt-get clean
-    - name: Clone source code
+    - name: 克隆源码
       env: 
-        # REPO_URL: https://github.com/coolsnowwolf/lede
-        # REPO_BRANCH: master
-        REPO_URL: https://github.com/Lienol/openwrt
-        REPO_BRANCH: 21.02
+        REPO_URL: https://github.com/coolsnowwolf/lede
+        REPO_BRANCH: master
         
       run: |
         git clone --depth 1 $REPO_URL -b $REPO_BRANCH openwrt
@@ -82,24 +80,24 @@ jobs:
         echo "src-git passwall https://github.com/xiaorouji/openwrt-passwall.git" >> ./feeds.conf.default
         # 修改说明：fw876/helloworld启用ssr功能（正常），xiaorouji/openwrt-passwall启用passwall（失败），尝试注销73行的源，更换为75行的源（2022.11.17）
         
-    - name: Update & Install feeds
+    - name: 上传&安装 feeds
       working-directory: ./openwrt
       run: |
         ./scripts/feeds update -a
         ./scripts/feeds install -a
         ./scripts/feeds install -a
-    - name: Import external feeds - passwall
+    - name: 导入外部 feeds - passwall
       working-directory: ./openwrt
       run: |
         git clone https://github.com/xiaorouji/openwrt-passwall.git package/lienol
     #    git clone "your_github_link" package/"your_folder_name"      
 
-    #- name: Import external feeds - JerryKuKu Argon
+    #- name: 导入外部 feeds - JerryKuKu Argon
     #  working-directory: ./openwrt
     #  run: |
     #    git clone -b 18.06 https://github.com/jerrykuku/luci-theme-argon.git package/luci-theme-argon-jerrykuku
 
-    - name: Configuration Customization - Build_x86_64
+    - name: 根据配置文件对固件进行配置 - Build_x86_64
       env:
         CONFIG_FILE: 'x86_64.config'
       run: |
@@ -107,18 +105,18 @@ jobs:
         chmod +x ./login-setting.sh && ./login-setting.sh
         cd openwrt && make defconfig
         
-    - name: Download package
+    - name: 下载 package
       working-directory: ./openwrt
       run: |
         make download -j$(nproc)
         find dl -size -1024c -exec ls -l {} \;
         find dl -size -1024c -exec rm -f {} \;
-    - name: Build firmware
+    - name: 编译固件
       working-directory: ./openwrt
       run: |
         echo -e "$(nproc) thread build."
         make -j$(nproc) V=s
-    - name : Upload artifact
+    - name : 上传 artifact
       uses: actions/upload-artifact@master
       with:
         name: OpenWrt
