@@ -70,14 +70,17 @@ jobs:
         sudo -E apt-get clean
     - name: Clone source code
       env: 
-        REPO_URL: https://github.com/coolsnowwolf/lede
-        REPO_BRANCH: master
+        # REPO_URL: https://github.com/coolsnowwolf/lede
+        # REPO_BRANCH: master
+        REPO_URL: https://github.com/Lienol/openwrt
+        REPO_BRANCH: 21.02
+        
       run: |
         git clone --depth 1 $REPO_URL -b $REPO_BRANCH openwrt
         cd openwrt
         echo "src-git ssrp https://github.com/fw876/helloworld.git" >> ./feeds.conf.default
         echo "src-git passwall https://github.com/xiaorouji/openwrt-passwall.git" >> ./feeds.conf.default
-        # 修改说明：11.16测试失败，取消了ssr，passwall未添加，再次测试启用78行代码（2022.11.17）
+        # 修改说明：fw876/helloworld启用ssr功能（正常），xiaorouji/openwrt-passwall启用passwall（失败），尝试注销73行的源，更换为75行的源（2022.11.17）
         
     - name: Update & Install feeds
       working-directory: ./openwrt
