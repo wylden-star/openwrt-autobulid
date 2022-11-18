@@ -76,8 +76,7 @@ jobs:
       run: |
         git clone --depth 1 $REPO_URL -b $REPO_BRANCH openwrt
         cd openwrt
-        echo "src-git passwall https://github.com/xiaorouji/openwrt-passwall.git" >> ./feeds.conf.default
-    #    echo "src-git ssrp https://github.com/fw876/helloworld.git" >> ./feeds.conf.default
+        echo "src-git ssrp https://github.com/fw876/helloworld.git" >> ./feeds.conf.default
          
     - name: 上传&安装 feeds
       working-directory: ./openwrt
@@ -85,12 +84,11 @@ jobs:
         ./scripts/feeds update -a
         ./scripts/feeds install -a
         ./scripts/feeds install -a
-    #- name: 导入外部 feeds - passwall
-    #  working-directory: ./openwrt
-    #  run: |
-    #    git clone https://github.com/xiaorouji/openwrt-passwall.git package/lienol
-    #    git clone "your_github_link" package/"your_folder_name"      
-    # 添加第79行feeds，注释掉80、88-91行导入外部feeds（11.18测试）
+    - name: 导入外部 feeds - passwall
+      working-directory: ./openwrt
+      run: |
+        git clone https://github.com/xiaorouji/openwrt-passwall.git package/lienol
+        git clone "your_github_link" package/"your_folder_name"      
     
     #- name: 导入外部 feeds - JerryKuKu Argon
     #  working-directory: ./openwrt
